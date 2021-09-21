@@ -1,21 +1,17 @@
 import unittest
 from app.calculator import *
-from app.calculator_form import *
 
 
 class TestCalculator(unittest.TestCase):
 
-    # you may create more test methods
-    # you may add parameters to test methods
-    # this is an example
+    def __init__(self, method_name='runTest'):
+        super().__init__(method_name)
+        self.calculator = Calculator()
 
     def test_cost(self):
-        self.calculator = Calculator()
         self.assertEqual(self.calculator.cost_calculation(20, 30, 75, True, True), 8.25)
 
-
     def test_functions(self):
-        self.calculator = Calculator()
         # Valid input
         self.assertEqual(self.calculator.battery_test(75), 3.75)
         # Using 0 as input
@@ -91,11 +87,6 @@ class TestCalculator(unittest.TestCase):
         self.assertEqual(self.calculator.charger_config_test("asd"), "Configuration must be in rage 1-8")
 
 
-
-    # you may create test suite if needed
-    if __name__ == "__main__":
-        unittest.main()
-
-
-
-    # this is required for test suite and run it
+# you may create test suite if needed
+if __name__ == "__main__":
+    unittest.main()
