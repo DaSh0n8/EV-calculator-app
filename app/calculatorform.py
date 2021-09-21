@@ -13,7 +13,8 @@ class CalculatorForm(FlaskForm):
     final_charge = IntegerField("Final Charge", [DataRequired("Final Charge is required")])
     start_date = DateField("Start Date", [DataRequired("Start Date is required")])
     start_time = TimeField("Start Time", [DataRequired("Start Time is required")])
-    charger_configuration = SelectField("Charger Configuration", [DataRequired("Charger Configuration is required")],
+    charger_configuration = SelectField("Charger Configuration",
+                                        [DataRequired("Charger Configuration is required")],
                                         choices=CHARGER_CONFIGS)
     post_code = IntegerField("Post Code", [DataRequired("Post Code is required")])
 

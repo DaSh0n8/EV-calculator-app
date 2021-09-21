@@ -6,10 +6,10 @@ from app.calculator import *
 from app.calculatorform import *
 import os
 
-SECRET_KEY = os.urandom(32)
+CALCULATOR_PAGE = "calculator.html"
 
 App = Flask(__name__)
-App.config['SECRET_KEY'] = SECRET_KEY
+App.config['SECRET_KEY'] = os.urandom(32)
 
 
 @App.route('/', methods=['GET', 'POST'])
@@ -47,17 +47,16 @@ def operation_result():
 
         # values of variables can be sent to the template for rendering the webpage that users will see
         # return render_template('calculator.html', cost = cost, time = time, calculation_success = True, form = form)
-        return render_template('calculator.html', calculation_success=True, form=form)
+        return render_template(CALCULATOR_PAGE, calculation_success=True, form=form)
 
     else:
         # battery_capacity = request.form['BatteryPackCapacity']
         # flash(battery_capacity)
         # flash("something went wrong")
         flash_errors(form)
-        return render_template('calculator.html', calculation_success=False, form=form)
+        return render_template(CALCULATOR_PAGE, calculation_success=False, form=form)
 
 
-# method to display all errors
 def flash_errors(form):
     """Flashes form errors"""
     for field, errors in form.errors.items():
