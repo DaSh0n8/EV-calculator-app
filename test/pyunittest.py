@@ -1,5 +1,7 @@
-from app.calculator import *
 import unittest
+from app.calculator import *
+from app.calculator_form import *
+
 
 class TestCalculator(unittest.TestCase):
 

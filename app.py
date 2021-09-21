@@ -5,6 +5,7 @@ from app.calculator import *
 
 from app.calculator_form import *
 import os
+
 SECRET_KEY = os.urandom(32)
 
 ev_calculator_app = Flask(__name__)
@@ -46,7 +47,7 @@ def operation_result():
         # time = calculator.time_calculation(initial_charge, final_charge, battery_capacity, power)
 
         # you may change the return statement also
-        
+
         # values of variables can be sent to the template for rendering the webpage that users will see
         # return render_template('calculator.html', cost = cost, time = time, calculation_success = True, form = calculator_form)
         return render_template('calculator.html', calculation_success=True, form=calculator_form)
@@ -56,7 +57,8 @@ def operation_result():
         # flash(battery_capacity)
         # flash("something went wrong")
         flash_errors(calculator_form)
-        return render_template('calculator.html', calculation_success = False, form = calculator_form)
+        return render_template('calculator.html', calculation_success=False, form=calculator_form)
+
 
 # method to display all errors
 def flash_errors(form):

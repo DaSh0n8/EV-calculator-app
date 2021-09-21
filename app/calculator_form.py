@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, DateField, TimeField
 from wtforms.validators import DataRequired, ValidationError, Optional
 
+
 # validation for form inputs
 class Calculator_Form(FlaskForm):
     # this variable name needs to match with the input attribute name in the html file
