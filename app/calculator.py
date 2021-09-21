@@ -1,4 +1,4 @@
-class Calculator():
+class Calculator:
     # you can choose to initialise variables here, if needed.
     def __init__(self):
         pass
@@ -121,5 +121,3 @@ class Calculator():
 
     def calculate_solar_energy(self):
         pass
-
-

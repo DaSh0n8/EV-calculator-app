@@ -3,7 +3,7 @@ from flask import render_template
 from flask import request
 from app.calculator import *
 
-from app.calculator_form import *
+from app.calculatorform import *
 import os
 
 SECRET_KEY = os.urandom(32)
@@ -14,10 +14,7 @@ ev_calculator_app.config['SECRET_KEY'] = SECRET_KEY
 
 @ev_calculator_app.route('/', methods=['GET', 'POST'])
 def operation_result():
-    # request.form looks for:
-    # html tags with matching "name="
-
-    calculator_form = Calculator_Form(request.form)
+    calculator_form = CalculatorForm(request.form)
 
     # validation of the form
     if request.method == "POST" and calculator_form.validate():
@@ -25,12 +22,12 @@ def operation_result():
         calculator = Calculator()
 
         # extract information from the form
-        battery_capacity = request.form['BatteryPackCapacity']
-        initial_charge = request.form['InitialCharge']
-        final_charge = request.form['FinalCharge']
-        start_date = request.form['StartDate']
-        start_time = request.form['StartTime']
-        charger_configuration = request.form['ChargerConfiguration']
+        battery_capacity = request.form["battery_capacity"]
+        initial_charge = request.form["initial_charge"]
+        final_charge = request.form["final_charge"]
+        start_date = request.form["start_date"]
+        start_time = request.form["start_time"]
+        charger_configuration = request.form["charger_configuration"]
 
         # you may change the logic as your like
         duration = calculator.get_duration(start_time)
