@@ -23,6 +23,68 @@ class Calculator():
         time = (final_state - initial_state) / 100 * capacity / power
         return time
 
+    def battery_test(self, capacity):
+        cost = self.cost_calculation(20, 30, capacity, False, False)
+        return cost
+
+    def soc_test(self, initial_state, final_state):
+        if (type(initial_state) != int) or (type(final_state) != int):
+            result = "Must be numerical value"
+            return result
+        elif (initial_state > 100) or (final_state > 100):
+            result = "Percentage cannot exceed 100"
+            return result
+        elif (initial_state < 0) or (final_state < 0):
+            result = "Percentage cannot be lower than 0"
+            return result
+        else:
+            result = self.cost_calculation(initial_state, final_state, 75, True, True)
+            return result
+
+    def time_and_date_test(self, on_peak, surcharge):
+        if isinstance(on_peak, bool) and isinstance(surcharge, bool):
+            result = self.cost_calculation(20, 30, 75, on_peak, surcharge)
+            return result
+        else:
+            result = "Must be either True or False"
+            return result
+
+    def charger_config_test(self, configuration):
+        if configuration == 1:
+            power = 2
+            time = self.time_calculation(20, 30, 75, power)
+            return time
+        elif configuration == 2:
+            power = 3.6
+            time = self.time_calculation(20, 30, 75, power)
+            return time
+        elif configuration == 3:
+            power = 7.2
+            time = self.time_calculation(20, 30, 75, power)
+            return time
+        elif configuration == 4:
+            power = 11
+            time = self.time_calculation(20, 30, 75, power)
+            return time
+        elif configuration == 5:
+            power = 22
+            time = self.time_calculation(20, 30, 75, power)
+            return time
+        elif configuration == 6:
+            power = 36
+            time = self.time_calculation(20, 30, 75, power)
+            return time
+        elif configuration == 7:
+            power = 90
+            time = self.time_calculation(20, 30, 75, power)
+            return time
+        elif configuration == 8:
+            power = 350
+            time = self.time_calculation(20, 30, 75, power)
+            return time
+        else:
+            time = "Configuration must be in rage 1-8"
+            return time
 
     # you may create some new methods at your convenience, or modify these methods, or choose not to use them.
     def is_holiday(self, start_date):
