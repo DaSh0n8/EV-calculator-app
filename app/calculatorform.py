@@ -1,12 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, DateField, TimeField, IntegerField, SelectField, validators
 from wtforms.validators import DataRequired, ValidationError, Optional
-
-CHARGER_CONFIGS = ["1", "2", "3", "4", "5", "6", "7", "8"]
-
-
-def is_percent(n: int):
-    return 0 <= n <= 100
+from .validation import *
 
 
 # validation for form inputs
@@ -23,35 +18,23 @@ class CalculatorForm(FlaskForm):
     post_code = IntegerField("Post Code", [DataRequired("Post Code is required")])
 
     # use validate_ + field_name to activate the flask-wtforms built-in validator
-    def validate_battery_capacity(self, field):
-        if field.data is None or field.data == "":
-            raise ValidationError("Value is empty")
-        if not field.data > 0:
-            raise ValidationError("Capacity must be > 0")
+    def validate_battery_capacity(self, field: IntegerField):
+        expect_battery_capacity(field.data)
 
-    # validate initial charge here
-    def validate_initial_charge(self, field):
-        # another example of how to compare initial charge with final charge
-        # you may modify this part of the code
-        if field.data > self.final_charge.data:
-            raise ValueError("Initial charge data error")
+    def validate_initial_charge(self, field: IntegerField):
+        expect_initial_charge(field.data, self.final_charge.data)
 
-    # validate final charge here
-    def validate_final_charge(self, field):
-        pass
+    def validate_final_charge(self, field: IntegerField):
+        expect_final_charge(field.data, self.initial_charge.data)
 
-    # validate start date here
-    def validate_start_date(self, field):
-        pass
+    def validate_start_date(self, field: DateField):
+        expect_start_date(field.data)
 
-    # validate start time here
-    def validate_start_time(self, field):
-        pass
+    def validate_start_time(self, field: TimeField):
+        expect_start_time(field.data)
 
-    # validate charger configuration here
-    def validate_charger_configuration(self, field):
-        pass
+    def validate_charger_configuration(self, field: SelectField):
+        expect_charger_configuration(field.data)
 
-    # validate postcode here
-    def validate_post_code(self, field):
-        pass
+    def validate_post_code(self, field: IntegerField):
+        expect_post_code(field.data)
