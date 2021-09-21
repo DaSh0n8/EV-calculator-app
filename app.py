@@ -14,20 +14,20 @@ ev_calculator_app.config['SECRET_KEY'] = SECRET_KEY
 
 @ev_calculator_app.route('/', methods=['GET', 'POST'])
 def operation_result():
-    calculator_form = CalculatorForm(request.form)
+    form = CalculatorForm(request.form)
 
     # validation of the form
-    if request.method == "POST" and calculator_form.validate():
+    if request.method == "POST" and form.validate():
         # if valid, create calculator to calculate the time and cost
         calculator = Calculator()
 
         # extract information from the form
-        battery_capacity = request.form["battery_capacity"]
-        initial_charge = request.form["initial_charge"]
-        final_charge = request.form["final_charge"]
-        start_date = request.form["start_date"]
-        start_time = request.form["start_time"]
-        charger_configuration = request.form["charger_configuration"]
+        battery_capacity = form.battery_capacity.data
+        initial_charge = form.initial_charge.data
+        final_charge = form.final_charge.data
+        start_date = form.start_date.data
+        start_time = form.start_time.data
+        charger_configuration = form.charger_configuration.data
 
         # you may change the logic as your like
         duration = calculator.get_duration(start_time)
@@ -46,15 +46,15 @@ def operation_result():
         # you may change the return statement also
 
         # values of variables can be sent to the template for rendering the webpage that users will see
-        # return render_template('calculator.html', cost = cost, time = time, calculation_success = True, form = calculator_form)
-        return render_template('calculator.html', calculation_success=True, form=calculator_form)
+        # return render_template('calculator.html', cost = cost, time = time, calculation_success = True, form = form)
+        return render_template('calculator.html', calculation_success=True, form=form)
 
     else:
         # battery_capacity = request.form['BatteryPackCapacity']
         # flash(battery_capacity)
         # flash("something went wrong")
-        flash_errors(calculator_form)
-        return render_template('calculator.html', calculation_success=False, form=calculator_form)
+        flash_errors(form)
+        return render_template('calculator.html', calculation_success=False, form=form)
 
 
 # method to display all errors
