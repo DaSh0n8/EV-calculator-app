@@ -8,11 +8,11 @@ import os
 
 SECRET_KEY = os.urandom(32)
 
-ev_calculator_app = Flask(__name__)
-ev_calculator_app.config['SECRET_KEY'] = SECRET_KEY
+App = Flask(__name__)
+App.config['SECRET_KEY'] = SECRET_KEY
 
 
-@ev_calculator_app.route('/', methods=['GET', 'POST'])
+@App.route('/', methods=['GET', 'POST'])
 def operation_result():
     form = CalculatorForm(request.form)
 
@@ -69,4 +69,4 @@ def flash_errors(form):
 
 
 if __name__ == '__main__':
-    ev_calculator_app.run()
+    App.run()
