@@ -9,7 +9,7 @@ class TestCalculator(unittest.TestCase):
         super().__init__(method_name)
         self.calculator = Calculator()
 
-    def assertValidation(self, expected_exception: ValidationError, *args, **kwargs):
+    def assertValidation(self, expected_exception: Exception, *args, **kwargs):
         self.assertRaisesRegex(expected_exception.__class__, str(expected_exception), *args, *kwargs)
 
     def test_battery_capacity1(self):
