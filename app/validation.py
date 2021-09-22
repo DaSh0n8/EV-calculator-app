@@ -16,6 +16,7 @@ def is_percent(n: int):
 class BatteryCapacity:
     NotPositiveInteger = ValidationError("Battery capacity must be a positive integer")
 
+    @staticmethod
     def validate(value: int) -> bool:
         if not is_positive_number(value):
             raise BatteryCapacity.NotPositiveInteger
@@ -26,6 +27,7 @@ class InitialCharge:
     NotPercentage = ValidationError("Initial charge must be a percentage [0,100]")
     GreaterThanFinalCharge = ValidationError("Initial charge must be <= final charge")
 
+    @staticmethod
     def validate(value: int, final_charge: int) -> bool:
         if not is_percent(value):
             raise InitialCharge.NotPercentage
@@ -38,6 +40,7 @@ class FinalCharge:
     NotPercentage = ValidationError("Final charge must be a percentage [0,100]")
     LessThanInitialCharge = ValidationError("Final charge must be >= final charge")
 
+    @staticmethod
     def validate(value: int, initial_charge: int) -> bool:
         if not is_percent(value):
             raise FinalCharge.NotPercentage
@@ -49,6 +52,7 @@ class FinalCharge:
 class StartDate:
     NotValidDate = ValidationError("Start date must be a valid date")
 
+    @staticmethod
     def validate(value: date) -> bool:
         if not isinstance(value, date):
             raise StartDate.NotValidDate
@@ -58,6 +62,7 @@ class StartDate:
 class StartTime:
     NotValidTime = ValidationError("Start time must be a valid time")
 
+    @staticmethod
     def validate(value: time) -> bool:
         if not isinstance(value, time):
             raise StartTime.NotValidTime
@@ -67,6 +72,7 @@ class StartTime:
 class ChargerConfiguration:
     Invalid = ValidationError(f"Charger configuration must be one of: {CHARGER_CONFIGS}")
 
+    @staticmethod
     def validate(value: str) -> bool:
         if not (isinstance(value, str) and value in CHARGER_CONFIGS):
             raise ChargerConfiguration.Invalid
@@ -76,6 +82,7 @@ class ChargerConfiguration:
 class PostCode:
     NotPositiveInteger = ValidationError("Post code must be a positive integer")
 
+    @staticmethod
     def validate(value: int) -> bool:
         if not is_positive_number(value):
             raise ValidationError("Post code must be a positive integer")
