@@ -18,7 +18,7 @@ class TestCalculator(unittest.TestCase):
         self.assertValidation(BatteryCapacity.NotPositiveInteger, BatteryCapacity.validate, -1)
 
     def test_battery_capacity2(self):
-        self.assertEqual(BatteryCapacity.validate(5), 5)
+        self.assertTrue(BatteryCapacity.validate(5))
 
     def test_cost(self):
         self.assertEqual(self.calculator.cost_calculation(20, 30, 75, True, True), 8.25)
