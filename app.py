@@ -22,12 +22,12 @@ def operation_result():
         calculator = Calculator()
 
         # extract information from the form
-        battery_capacity = form.battery_capacity.data
+        capacity = form.capacity.data
         initial_charge = form.initial_charge.data
         final_charge = form.final_charge.data
         start_date = form.start_date.data
         start_time = form.start_time.data
-        charger_configuration = form.charger_configuration.data
+        charger_config = form.charger_config.data
 
         # you may change the logic as your like
         duration = calculator.get_duration(start_time)

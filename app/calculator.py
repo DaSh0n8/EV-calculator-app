@@ -1,17 +1,22 @@
+from .validation import *
+
+
 class Calculator:
     def __init__(self):
         pass
 
     # you may add more parameters if needed, you may modify the formula also.
-    def cost_calculation(self, initial_state, final_state, capacity, is_peak, is_holiday):
+    def cost_calculation(self, initial_charge, final_charge, capacity, is_peak, is_holiday):
+        # validate(initial_charge=initial_charge, final_charge=final_charge, capacity=capacity)
         base_price = 100 if is_peak else 50
         surcharge_factor = 1.1 if is_holiday else 1
 
-        return (final_state - initial_state) / 100 * capacity * base_price / 100 * surcharge_factor
+        return (final_charge - initial_charge) / 100 * capacity * base_price / 100 * surcharge_factor
 
     # you may add more parameters if needed, you may also modify the formula.
-    def time_calculation(self, initial_state, final_state, capacity, power):
-        return (final_state - initial_state) / 100 * capacity / power
+    def time_calculation(self, initial_charge, final_charge, capacity, power):
+        # validate(initial_charge=initial_charge, final_charge=final_charge, battery_capacity=capacity)
+        return (final_charge - initial_charge) / 100 * capacity / power
 
     # you may create some new methods at your convenience, or modify these methods, or choose not to use them.
     def is_holiday(self, start_date):

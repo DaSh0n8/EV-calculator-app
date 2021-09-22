@@ -102,10 +102,10 @@
       <table>
         <tbody>
           <tr>
-            <td>{{ form.battery_capacity.label }}</td>
+            <td>{{ form.capacity.label }}</td>
             <td>
               {# {{ form.battery_capacity }}#}
-              <input type="number" name="battery_capacity" id="battery_capacity"/>
+              <input type="number" name="capacity" id="capacity"/>
             </td>
           </tr>
 
@@ -141,11 +141,10 @@
           </tr>
 
           <tr>
-            <td>{{ form.charger_configuration.label }}</td>
+            <td>{{ form.charger_config.label }}</td>
             <td>
               {# {{ form.charger_configuration }}#}
-{#              <input type="" name="charger_configuration" id="charger_configuration"/>#}
-                <select name="charger_configuration" id="charger_configuration">
+                <select name="charger_config" id="charger_config">
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>

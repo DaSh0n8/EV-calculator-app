@@ -13,13 +13,28 @@ def is_percent(n: int):
     return isinstance(n, int) and 0 <= n <= 100
 
 
-class BatteryCapacity:
+def validate(**kwargs):
+    if "capacity" in kwargs:
+        Capacity.validate(kwargs.get("capacity"))
+    if "initial_charge" in kwargs:
+        InitialCharge.validate(kwargs.get("initial_charge"), kwargs.get("final_charge"))
+    if "final_charge" in kwargs:
+        FinalCharge.validate(kwargs.get("final_charge"), kwargs.get("initial_charge"))
+    if "start_date" in kwargs:
+        StartDate.validate(kwargs.get("start_date"))
+    if "start_time" in kwargs:
+        StartTime.validate(kwargs.get("start_time"))
+    if "charger_config" in kwargs:
+        ChargerConfig.validate(kwargs.get("charger_config"))
+
+
+class Capacity:
     NotPositiveInteger = ValidationError("Battery capacity must be a positive integer")
 
     @staticmethod
     def validate(value: int) -> bool:
         if not is_positive_number(value):
-            raise BatteryCapacity.NotPositiveInteger
+            raise Capacity.NotPositiveInteger
         return True
 
 
@@ -69,13 +84,13 @@ class StartTime:
         return True
 
 
-class ChargerConfiguration:
+class ChargerConfig:
     Invalid = ValidationError(f"Charger configuration must be one of: {CHARGER_CONFIGS}")
 
     @staticmethod
     def validate(value: str) -> bool:
         if not (isinstance(value, str) and value in CHARGER_CONFIGS):
-            raise ChargerConfiguration.Invalid
+            raise ChargerConfig.Invalid
         return True
 
 

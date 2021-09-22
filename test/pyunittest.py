@@ -13,12 +13,12 @@ class TestCalculator(unittest.TestCase):
         self.assertRaisesRegex(expected_exception.__class__, str(expected_exception), *args, *kwargs)
 
     def test_battery_capacity1(self):
-        self.assertValidation(BatteryCapacity.NotPositiveInteger, lambda: BatteryCapacity.validate(-1))
+        self.assertValidation(Capacity.NotPositiveInteger, lambda: Capacity.validate(-1))
         # This is equivalent to
-        self.assertValidation(BatteryCapacity.NotPositiveInteger, BatteryCapacity.validate, -1)
+        self.assertValidation(Capacity.NotPositiveInteger, Capacity.validate, -1)
 
     def test_battery_capacity2(self):
-        self.assertTrue(BatteryCapacity.validate(5))
+        self.assertTrue(Capacity.validate(5))
 
     def test_cost(self):
         self.assertEqual(self.calculator.cost_calculation(20, 30, 75, True, True), 8.25)
