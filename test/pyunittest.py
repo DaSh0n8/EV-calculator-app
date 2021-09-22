@@ -9,8 +9,11 @@ class TestCalculator(unittest.TestCase):
         super().__init__(method_name)
         self.calculator = Calculator()
 
-    def assertValidation(self, expected_exception: Exception, *args, **kwargs):
-        self.assertRaisesRegex(expected_exception.__class__, str(expected_exception), *args, *kwargs)
+    def assertValidation(self, expected_exception: Exception, f, *args, **kwargs):
+        with self.assertRaises(expected_exception.__class__) as cm:
+            f(*args, **kwargs)
+
+        self.assertEqual(cm.exception, expected_exception)
 
     def test_battery_capacity1(self):
         self.assertValidation(Capacity.NotPositiveInteger, lambda: Capacity.validate(-1))
