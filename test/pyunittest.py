@@ -9,6 +9,17 @@ class TestCalculator(unittest.TestCase):
         super().__init__(method_name)
         self.calculator = Calculator()
 
+    def assertValidation(self, expected_exception: ValidationError, *args, **kwargs):
+        self.assertRaisesRegex(expected_exception.__class__, str(expected_exception), *args, *kwargs)
+
+    def test_battery_capacity1(self):
+        self.assertValidation(BatteryCapacity.NotPositiveInteger, lambda: BatteryCapacity.validate(-1))
+        # This is equivalent to
+        self.assertValidation(BatteryCapacity.NotPositiveInteger, BatteryCapacity.validate, -1)
+
+    def test_battery_capacity2(self):
+        self.assertEqual(BatteryCapacity.validate(5), 5)
+
     def test_cost(self):
         self.assertEqual(self.calculator.cost_calculation(20, 30, 75, True, True), 8.25)
 
