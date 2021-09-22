@@ -1,3 +1,4 @@
+import math
 from datetime import date, time
 
 from wtforms import ValidationError
@@ -96,9 +97,16 @@ class ChargerConfig:
 
 class PostCode:
     NotPositiveInteger = ValidationError("Post code must be a positive integer")
+    InvalidDigits = ValidationError("Post code must be [2,4] digits")
 
     @staticmethod
     def validate(value: int) -> bool:
         if not is_positive_number(value):
-            raise ValidationError("Post code must be a positive integer")
+            raise PostCode.NotPositiveInteger
+
+        # All Australian postcodes are [2,4] digits; source: https://en.wikipedia.org/wiki/Postcodes_in_Australia
+        digits = int(math.log10(value)) + 1
+        if not 2 <= digits <= 4:
+            raise PostCode.InvalidDigits
+
         return True
