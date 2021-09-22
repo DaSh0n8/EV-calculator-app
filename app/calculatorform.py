@@ -20,22 +20,22 @@ class CalculatorForm(FlaskForm):
 
     # use validate_ + field_name to activate the flask-wtforms built-in validator
     def validate_battery_capacity(self, field: IntegerField):
-        expect_battery_capacity(field.data)
+        BatteryCapacity.validate(field.data)
 
     def validate_initial_charge(self, field: IntegerField):
-        expect_initial_charge(field.data, self.final_charge.data)
+        InitialCharge.validate(field.data, self.final_charge.data)
 
     def validate_final_charge(self, field: IntegerField):
-        expect_final_charge(field.data, self.initial_charge.data)
+        FinalCharge.validate(field.data, self.initial_charge.data)
 
     def validate_start_date(self, field: DateField):
-        expect_start_date(field.data)
+        StartDate.validate(field.data)
 
     def validate_start_time(self, field: TimeField):
-        expect_start_time(field.data)
+        StartTime.validate(field.data)
 
     def validate_charger_configuration(self, field: SelectField):
-        expect_charger_configuration(field.data)
+        ChargerConfiguration.validate(field.data)
 
     def validate_post_code(self, field: IntegerField):
-        expect_post_code(field.data)
+        PostCode.validate(field.data)
