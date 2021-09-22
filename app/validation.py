@@ -47,6 +47,8 @@ class InitialCharge:
     def validate(value: int, final_charge: int) -> bool:
         if not is_percent(value):
             raise InitialCharge.NotPercentage
+        if not is_percent(final_charge):
+            raise FinalCharge.NotPercentage
         if value > final_charge:
             raise InitialCharge.GreaterThanFinalCharge
         return True
@@ -54,12 +56,14 @@ class InitialCharge:
 
 class FinalCharge:
     NotPercentage = ValidationError("Final charge must be a percentage [0,100]")
-    LessThanInitialCharge = ValidationError("Final charge must be >= final charge")
+    LessThanInitialCharge = ValidationError("Final charge must be >= initial charge")
 
     @staticmethod
     def validate(value: int, initial_charge: int) -> bool:
         if not is_percent(value):
             raise FinalCharge.NotPercentage
+        if not is_percent(initial_charge):
+            raise InitialCharge.NotPercentage
         if value < initial_charge:
             raise FinalCharge.LessThanInitialCharge
         return True
