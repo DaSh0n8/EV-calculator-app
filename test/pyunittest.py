@@ -1,7 +1,7 @@
 import unittest
 from app.calculator import *
 from app.validation import *
-
+from app.validation import *
 
 class TestCalculator(unittest.TestCase):
 
@@ -30,30 +30,31 @@ class TestCalculator(unittest.TestCase):
         # Valid input
         self.assertEqual(self.battery_test(75), 3.75)
         # Using 0 as input
-        self.assertEqual(self.battery_test(0), 0)
+        self.assertValidation(Capacity.NotPositiveInteger, Capacity.validate, 0)
         # Negative number as input
-        self.assertEqual(self.battery_test(-25), -1.25)
+        self.assertValidation(Capacity.NotPositiveInteger, Capacity.validate, -25)
         # Non-numerical input
-        # self.assertEqual(self.calculator.battery_test(0), 0)
+        self.assertValidation(Capacity.NotPositiveInteger, Capacity.validate, "abc")
+
         # INITIAL AND FINAL SOC
         # Off-point value for initial SoC with on-point value for final SoC
-        self.assertEqual(self.soc_test(-1, 100), "Percentage cannot be lower than 0")
+        self.assertValidation(InitialCharge.NotPercentage, lambda: InitialCharge.validate(-1, 100))
         # Off-point value for initial SoC with invalid final SoC
-        self.assertEqual(self.soc_test(-1, -20), "Percentage cannot be lower than 0")
+        self.assertValidation(InitialCharge.NotPercentage, lambda: InitialCharge.validate(-1, -20))
         # On-point value for initial SoC with off-point value for final SoC
-        self.assertEqual(self.soc_test(0, 101), "Percentage cannot exceed 100")
+        self.assertValidation(FinalCharge.NotPercentage, lambda: FinalCharge.validate(101, 0))
         # Out-point value for initial SoC and on-point value for final SoC
-        self.assertEqual(self.soc_test(120, 100), "Percentage cannot exceed 100")
+        self.assertValidation(InitialCharge.NotPercentage, lambda: InitialCharge.validate(120, 100))
         # On-point value for initial SoC and invalid final SoC
-        self.assertEqual(self.soc_test(0, "ab"), "Must be numerical value")
+        self.assertValidation(FinalCharge.NotPercentage, lambda: FinalCharge.validate("abc", 0))
         # Invalid initial SoC with invalid final SoC
-        self.assertEqual(self.soc_test(-30, -50), "Percentage cannot be lower than 0")
+        self.assertValidation(InitialCharge.NotPercentage, lambda: InitialCharge.validate(-30, -50))
         # Off-point value for initial SoC and off-point value for final SoC
-        self.assertEqual(self.soc_test(-1, 101), "Percentage cannot exceed 100")
+        self.assertValidation(InitialCharge.NotPercentage, lambda: InitialCharge.validate(-1, 101))
         # On-point value for initial SoC and on-point value for final SoC
         self.assertEqual(self.soc_test(0, 100), 82.5)
         # Invalid initial SoC with off-point final SoC
-        self.assertEqual(self.soc_test(120, 101), "Percentage cannot exceed 100")
+        self.assertValidation(InitialCharge.NotPercentage, lambda: InitialCharge.validate(120, 100))
 
         # TIME AND DATE
         # Description: Pairwise testing for Time and Date inputs
@@ -87,23 +88,26 @@ class TestCalculator(unittest.TestCase):
         # CHARGER CONFIGURATION
         # Description: Using boundary testing for charger configuration
         # Using an off-point value at the beginning of the range
-        self.assertEqual(self.charger_config_test(0), "Configuration must be in rage 1-8")
+        self.assertValidation(ChargerConfig.Invalid, lambda: ChargerConfig.validate("0"))
         # Using an on-point value at the beginning of the range
         self.assertEqual(self.charger_config_test(1), 3.75)
         # Using an on-point value at the end of the range
         self.assertEqual(self.charger_config_test(8), 0.02142857142857143)
         # Using an off-point value at the end of the range
-        self.assertEqual(self.charger_config_test(9), "Configuration must be in rage 1-8")
+        self.assertValidation(ChargerConfig.Invalid, lambda: ChargerConfig.validate("9"))
         # Using an in-point value
         self.assertEqual(self.charger_config_test(4), 0.6818181818181818)
         # Using an out-point value
-        self.assertEqual(self.charger_config_test(12), "Configuration must be in rage 1-8")
+        self.assertValidation(ChargerConfig.Invalid, lambda: ChargerConfig.validate("12"))
         # Using an invalid input
-        self.assertEqual(self.charger_config_test("asd"), "Configuration must be in rage 1-8")
+        self.assertValidation(ChargerConfig.Invalid, lambda: ChargerConfig.validate("abc"))
 
     def battery_test(self, capacity):
-        cost = self.calculator.cost_calculation(20, 30, capacity, False, False)
-        return cost
+        if Capacity.validate(capacity):
+            cost = self.calculator.cost_calculation(20, 30, capacity, False, False)
+            return cost
+        else:
+            raise Capacity.NotPositiveInteger
 
     def time_and_date_test(self, on_peak, surcharge):
         if isinstance(on_peak, bool) and isinstance(surcharge, bool):
