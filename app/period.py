@@ -20,9 +20,8 @@ class Period:
         assert start < end
 
     @property
-    def base_price(self) -> int:
-        # TODO: change this to base_price_factor if price is based on charger configuration
-        return 100 if self.is_peak else 50
+    def base_price_factor(self) -> int:
+        return 1 if self.is_peak else 0.5
 
     @property
     def surcharge_factor(self) -> float:

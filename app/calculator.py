@@ -12,10 +12,7 @@ class Calculator:
 
     def cost(self, initial_charge: int, final_charge: int, capacity: int,
              charger_config: int, start_date: date, start_time: time, postcode: int) -> float:
-        validate(initial_charge=initial_charge, final_charge=final_charge, capacity=capacity,
-                 charger_config=charger_config, start_date=start_date, start_time=start_time)
-
-        power: int = CHARGER_CONFIGS[charger_config]
+        (power, price) = CHARGER_CONFIGS[charger_config]
         total_dur: timedelta = Calculator.charging_duration(initial_charge, final_charge, capacity, power)
 
         start = to_datetime(start_date, start_time)
@@ -24,9 +21,9 @@ class Calculator:
         total_cost = 0
         for p in periods:
             charge = Calculator.period_charge(p, initial_charge, final_charge, total_dur)
-            total_cost += self.period_cost(p, charge, postcode, capacity)
+            total_cost += self.period_cost(p, charge, postcode, capacity, price)
 
-        return max(total_cost, 0)
+        return total_cost
 
     @staticmethod
     def charging_duration(initial_charge: int, final_charge: int, capacity: int, power: int) -> timedelta:
@@ -43,15 +40,12 @@ class Calculator:
         charge_proportion = minus_time(p.end, p.start) / total_dur
         return (final_charge - initial_charge) * charge_proportion
 
-    def period_cost(self, period: Period, charge: float, postcode: int, capacity: int) -> float:
-        validate(postcode=postcode, capacity=capacity)
-        assert charge > 0
-
+    def period_cost(self, period: Period, charge: float, postcode: int, capacity: int, price: float) -> float:
         energy_used = charge / 100 * capacity
         energy_charged = energy_used - self.solar_generated(period, postcode)
 
-        cost = energy_charged * period.base_price / 100 * period.surcharge_factor
-        return cost
+        cost = energy_charged * price * period.base_price_factor / 100 * period.surcharge_factor
+        return max(cost, 0)
 
     def solar_generated(self, period: Period, postcode: int) -> float:
         """Calculates solar generated (kWh) during a Period with a resolution of seconds"""
