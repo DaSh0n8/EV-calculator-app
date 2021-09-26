@@ -15,7 +15,7 @@ class CalculatorForm(FlaskForm):
     start_time = TimeField("Start Time", [DataRequired("Start Time is required")])
     charger_config = SelectField("Charger Configuration",
                                  [DataRequired("Charger Configuration is required")],
-                                 choices=CHARGER_CONFIGS)
+                                 choices=list(CHARGER_CONFIGS.keys()))
     post_code = IntegerField("Post Code", [DataRequired("Post Code is required")])
 
     # use validate_ + field_name to activate the flask-wtforms built-in validator

@@ -3,7 +3,16 @@ from datetime import date, time
 
 from wtforms import ValidationError
 
-CHARGER_CONFIGS = ["1", "2", "3", "4", "5", "6", "7", "8"]
+CHARGER_CONFIGS = {
+    "1": 2,  # $0.05     FACTOR IN THE CHARGER CONFIG PRICE?
+    "2": 3.6,  # 0.075
+    "3": 7.2,  # 0.1
+    "4": 11,  # 0.125
+    "5": 22,  # 0.15
+    "6": 36,  # 0.2
+    "7": 90,  # 0.3
+    "8": 350,  # 0.5
+}
 
 
 def is_positive_number(n: int):
