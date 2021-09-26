@@ -2,6 +2,13 @@ import unittest
 from app.calculator import *
 from app.validation import *
 from app.validation import *
+from app.period import *
+from app.api import MockWeatherApi
+
+
+def get_calc(si: float = 0, sunrise: time = time(), sunset: time = time()) -> Calculator:
+    return Calculator(MockWeatherApi(si=si, sunrise=sunrise, sunset=sunset))
+
 
 class TestCalculator(unittest.TestCase):
 
@@ -38,6 +45,26 @@ class TestCalculator(unittest.TestCase):
             Period(date(y, m, 2), DAY_START, BEFORE_PEAK),  # Day 2, before peak
             Period(date(y, m, 2), PEAK_START, time(14))  # Day 2, during peak
         ])
+
+    def test_single_period_charge(self):
+        p = Period(date.today(), time(3), time(5))
+        self.assertEqual(self.calculator.period_charge(p, 0, 50, timedelta(hours=2)), 50)
+
+    def test_multi_period_charge(self):
+        p = Period(date.today(), time(3), time(5))
+        self.assertEqual(self.calculator.period_charge(p, 0, 50, timedelta(hours=4)), 25)
+
+    def test_solar_generated(self):
+        si, sunrise, sunset = 5.6, time(8), time(16)
+        c = get_calc(si=si, sunrise=sunrise, sunset=sunset)
+        r = c.solar_generated(Period(date.today(), sunrise, sunset), 1000)
+        self.assertEqual(r, si * PANEL_SIZE * PANEL_EFFICIENCY)
+
+    def test_partial_solar_generated(self):
+        si, sunrise, sunset = 5.6, time(8), time(16)
+        c = get_calc(si=si, sunrise=sunrise, sunset=sunset)
+        r = c.solar_generated(Period(date.today(), time(12), sunset), 1000)
+        self.assertEqual(r, si * PANEL_SIZE * PANEL_EFFICIENCY / 2)
 
     def test_battery_capacity1(self):
         self.assertValidation(Capacity.NotPositiveInteger, lambda: Capacity.validate(-1))
