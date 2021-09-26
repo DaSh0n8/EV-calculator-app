@@ -44,3 +44,23 @@ class WeatherApi(WeatherApiInterface):
     def fetch_data(postcode: int, day: date):
         loc_id = WeatherApi.fetch_location_id(postcode)
         return requests.get(f"{WeatherApi.URI}/weather", params={"location": loc_id, "date": str(day)}).json()
+
+
+class MockWeatherApi(WeatherApiInterface):
+    __si: float
+    __sunrise: time
+    __sunset: time
+
+    def __init__(self, si: float, sunrise: time, sunset: time):
+        self.__si = si
+        self.__sunrise = sunrise
+        self.__sunset = sunset
+
+    def sunrise(self, postcode: int, day: date) -> time:
+        return self.__sunrise
+
+    def sunset(self, postcode: int, day: date) -> time:
+        return self.__sunset
+
+    def solar_insolation(self, postcode: int, day: date) -> float:
+        return self.__si
