@@ -12,6 +12,9 @@ class WeatherApiInterface:
     def solar_insolation(self, postcode: int, day: date) -> float:
         raise NotImplemented
 
+    def cloud_cover(self, postcode: int, day: date, hour: int) -> float:
+        raise NotImplemented
+
 
 class WeatherApi(WeatherApiInterface):
     URI = "http://118.138.246.158/api/v1"
@@ -27,6 +30,14 @@ class WeatherApi(WeatherApiInterface):
 
     def solar_insolation(self, postcode: int, day: date) -> float:
         return float(self.__get_data(postcode, day)["sunHours"])
+
+    def cloud_cover(self, postcode: int, day: date, hour: int) -> float:
+        data = self.__get_data(postcode, day)
+
+        hourData = [hd for hd in data["hourlyWeatherHistory"] if hd["hour"] == hour]
+        assert len(hourData) == 1
+
+        return hourData[0]["cloudCoverPct"] / 100
 
     def __get_data(self, postcode: int, day: date):
         # Get cached data, or fetch it if it isn't
@@ -50,11 +61,13 @@ class MockWeatherApi(WeatherApiInterface):
     __si: float
     __sunrise: time
     __sunset: time
+    __cloud_cover: float
 
-    def __init__(self, si: float, sunrise: time, sunset: time):
+    def __init__(self, si: float, sunrise: time, sunset: time, cloud_cover: float):
         self.__si = si
         self.__sunrise = sunrise
         self.__sunset = sunset
+        self.__cloud_cover = cloud_cover
 
     def sunrise(self, postcode: int, day: date) -> time:
         return self.__sunrise
@@ -64,3 +77,6 @@ class MockWeatherApi(WeatherApiInterface):
 
     def solar_insolation(self, postcode: int, day: date) -> float:
         return self.__si
+
+    def cloud_cover(self, postcode: int, day: date, hour: int) -> float:
+        return self.__cloud_cover
