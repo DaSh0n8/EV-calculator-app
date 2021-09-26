@@ -21,6 +21,9 @@ class Period:
         assert start < end
         assert start.hour == end.hour
 
+    def __eq__(self, o):
+        return (self.day, self.start, self.end) == (o.day, o.start, o.end)
+
     @property
     def base_price_factor(self) -> int:
         return 1 if self.is_peak else 0.5

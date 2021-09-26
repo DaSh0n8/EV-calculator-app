@@ -38,17 +38,25 @@ class TestCalculator(unittest.TestCase):
         p = Period(date.today(), time(3), time(5))
         self.assertEqual(self.calculator.period_charge(p, 0, 50, timedelta(hours=4)), 25)
 
-    def test_solar_generated(self):
-        si, sunrise, sunset = 5.6, time(8), time(16)
+    def test_solar_generated_wo_cc(self):
+        si, sunrise, sunset = 5.6, time(8), time(8, 59, 59)
         c = get_calc(si=si, sunrise=sunrise, sunset=sunset)
         r = c.solar_generated(Period(date.today(), sunrise, sunset), 1000)
-        self.assertEqual(r, si * PANEL_SIZE * PANEL_EFFICIENCY)
 
-    def test_partial_solar_generated(self):
-        si, sunrise, sunset = 5.6, time(8), time(16)
+        # Almost equal is required due to floating point operations
+        self.assertAlmostEqual(r, si * PANEL_SIZE * PANEL_EFFICIENCY, 5)
+
+    def test_partial_solar_generated_wo_cc(self):
+        si, sunrise, sunset = 5.6, time(8), time(10)
         c = get_calc(si=si, sunrise=sunrise, sunset=sunset)
-        r = c.solar_generated(Period(date.today(), time(12), sunset), 1000)
-        self.assertEqual(r, si * PANEL_SIZE * PANEL_EFFICIENCY / 2)
+        r = c.solar_generated(Period(date.today(), time(8), time(8, 59, 59)), 1000)
+        self.assertAlmostEqual(r, si * PANEL_SIZE * PANEL_EFFICIENCY / 2, 5)
+
+    def test_solar_generated_with_cc(self):
+        si, cc, sunrise, sunset = 5.6, 0.5, time(8), time(8, 59, 59)
+        c = get_calc(si=si, cc=cc, sunrise=sunrise, sunset=sunset)
+        r = c.solar_generated(Period(date.today(), sunrise, sunset), 1000)
+        self.assertAlmostEqual(r, si * (1 - cc) * PANEL_SIZE * PANEL_EFFICIENCY, 5)
 
     def test_battery_capacity1(self):
         self.assertValidation(Capacity.NotPositiveInteger, lambda: Capacity.validate(-1))
