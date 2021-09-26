@@ -36,6 +36,8 @@ def validate(**kwargs):
         StartTime.validate(kwargs.get("start_time"))
     if "charger_config" in kwargs:
         ChargerConfig.validate(kwargs.get("charger_config"))
+    if "postcode" in kwargs:
+        PostCode.validate(kwargs.get("postcode"))
 
 
 class Capacity:

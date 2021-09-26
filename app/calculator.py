@@ -1,57 +1,69 @@
 from .validation import *
+from .api import WeatherApi, WeatherApiInterface
+from .period import *
+
+PANEL_SIZE = 50  # 50 m^2
+PANEL_EFFICIENCY = 0.2  # 20%
 
 
 class Calculator:
-    def __init__(self):
-        pass
+    def __init__(self, api: WeatherApiInterface = WeatherApi()):
+        self.api = api
 
-    # you may add more parameters if needed, you may modify the formula also.
-    def cost_calculation(self, initial_charge, final_charge, capacity, is_peak, is_holiday):
+    def cost(self, initial_charge: int, final_charge: int, capacity: int,
+             charger_config: int, start_date: date, start_time: time, postcode: int) -> float:
+        validate(initial_charge=initial_charge, final_charge=final_charge, capacity=capacity,
+                 charger_config=charger_config, start_date=start_date, start_time=start_time)
+
+        power: int = CHARGER_CONFIGS[charger_config]
+        total_dur: timedelta = Calculator.charging_duration(initial_charge, final_charge, capacity, power)
+
+        start = to_datetime(start_date, start_time)
+        periods: [Period] = split(start, start + total_dur)
+
+        total_cost = 0
+        for p in periods:
+            charge = Calculator.period_charge(p, initial_charge, final_charge, total_dur)
+            total_cost += self.period_cost(p, charge, postcode, capacity)
+
+        return max(total_cost, 0)
+
+    @staticmethod
+    def charging_duration(initial_charge: int, final_charge: int, capacity: int, power: int) -> timedelta:
+        """Calculates time required to charge"""
         validate(initial_charge=initial_charge, final_charge=final_charge, capacity=capacity)
 
-        base_price = 100 if is_peak else 50
-        surcharge_factor = 1.1 if is_holiday else 1
+        hours = (final_charge - initial_charge) / 100 * capacity / power
+        return timedelta(hours=hours)
 
-        return (final_charge - initial_charge) / 100 * capacity * base_price / 100 * surcharge_factor
+    @staticmethod
+    def period_charge(p: Period, initial_charge: int, final_charge: int, total_dur: timedelta) -> float:
+        validate(initial_charge=initial_charge, final_charge=final_charge)
 
-    # you may add more parameters if needed, you may also modify the formula.
-    def time_calculation(self, initial_charge, final_charge, capacity, power):
-        validate(initial_charge=initial_charge, final_charge=final_charge, capacity=capacity)
+        charge_proportion = minus_time(p.end, p.start) / total_dur
+        return (final_charge - initial_charge) * charge_proportion
 
-        return (final_charge - initial_charge) / 100 * capacity / power
+    def period_cost(self, period: Period, charge: float, postcode: int, capacity: int) -> float:
+        validate(postcode=postcode, capacity=capacity)
+        assert charge > 0
 
-    # you may create some new methods at your convenience, or modify these methods, or choose not to use them.
-    def __is_holiday(self, start_date):
-        pass
+        energy_used = charge / 100 * capacity
+        energy_charged = energy_used - self.solar_generated(period, postcode)
 
-    def __is_peak(self):
-        pass
+        cost = energy_charged * period.base_price / 100 * period.surcharge_factor
+        return cost
 
-    def __peak_period(self, start_time):
-        pass
+    def solar_generated(self, period: Period, postcode: int) -> float:
+        """Calculates solar generated (kWh) during a Period with a resolution of seconds"""
+        sunrise = self.api.sunrise(postcode, period.day)
+        sunset = self.api.sunset(postcode, period.day)
+        dl_hours: float = minus_time(sunset, sunrise).total_seconds() / 60 / 60
+        si: float = self.api.solar_insolation(postcode, period.day)
+        generated_per_hour = si / dl_hours * PANEL_SIZE * PANEL_EFFICIENCY
 
-    def __get_duration(self, start_time):
-        pass
+        earliest_start = max(sunrise, period.start)
+        latest_end = min(sunset, period.end)
+        hours_generating = minus_time(latest_end, earliest_start).total_seconds() / 60 / 60
 
-    # to be acquired through API
-    def __get_sun_hour(self, sun_hour):
-        pass
-
-    # to be acquired through API
-    def __get_solar_energy_duration(self, start_time):
-        pass
-
-    # to be acquired through API
-    def __get_day_light_length(self, start_time):
-        pass
-
-    # to be acquired through API
-    def __get_solar_insolation(self, solar_insolation):
-        pass
-
-    # to be acquired through API
-    def __get_cloud_cover(self):
-        pass
-
-    def __calculate_solar_energy(self):
-        pass
+        total: float = generated_per_hour * hours_generating
+        return total
