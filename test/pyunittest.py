@@ -6,8 +6,8 @@ from app.period import *
 from app.api import MockWeatherApi
 
 
-def get_calc(si: float = 0, sunrise: time = time(), sunset: time = time()) -> Calculator:
-    return Calculator(MockWeatherApi(si=si, sunrise=sunrise, sunset=sunset))
+def get_calc(si: float = 0, sunrise: time = time(), sunset: time = time(), cc: float = 0) -> Calculator:
+    return Calculator(MockWeatherApi(si=si, sunrise=sunrise, sunset=sunset, cloud_cover=cc))
 
 
 class TestCalculator(unittest.TestCase):
@@ -22,28 +22,12 @@ class TestCalculator(unittest.TestCase):
 
         self.assertEqual(cm.exception, expected_exception)
 
-    def test_periods_split_by_day(self):
-        (y, m) = (2000, 1)
-        self.assertEqual(split(datetime(y, m, 1, 20), datetime(y, m, 2, 4)), [
-            Period(date(y, m, 1), time(20), DAY_END),  # Day 1
-            Period(date(y, m, 2), DAY_START, time(4))  # Day 2
-        ])
-
-    def test_periods_split_by_peak(self):
-        (y, m) = (2000, 1)
-        self.assertEqual(split(datetime(y, m, 1, 4), datetime(y, m, 1, 23)), [
-            Period(date(y, m, 1), time(4), BEFORE_PEAK),  # Prior to peak
-            Period(date(y, m, 1), PEAK_START, PEAK_END),  # During peak
-            Period(date(y, m, 1), AFTER_PEAK, time(23))
-        ])
-
-    def test_periods_split_by_day_and_peak(self):
-        (y, m) = (2000, 1)
-        self.assertEqual(split(datetime(y, m, 1, 15), datetime(y, m, 2, 14)), [
-            Period(date(y, m, 1), time(15), PEAK_END),  # Day 1, during peak
-            Period(date(y, m, 1), AFTER_PEAK, DAY_END),  # Day 1, after peak
-            Period(date(y, m, 2), DAY_START, BEFORE_PEAK),  # Day 2, before peak
-            Period(date(y, m, 2), PEAK_START, time(14))  # Day 2, during peak
+    def test_periods_split_by_hour(self):
+        day = date(2000, 1, 1)
+        self.assertEqual(split(to_datetime(day, time(1, 30)), to_datetime(day, time(3, 45))), [
+            Period(day, time(1, 30), time(1, 59, 59)),
+            Period(day, time(2), time(2, 59, 59)),
+            Period(day, time(3), time(3, 45)),
         ])
 
     def test_single_period_charge(self):
