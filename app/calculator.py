@@ -4,6 +4,7 @@ from .period import *
 
 PANEL_SIZE = 50  # 50 m^2
 PANEL_EFFICIENCY = 0.2  # 20%
+AVERAGE_POINTS = 3
 
 
 class Calculator:
@@ -27,16 +28,11 @@ class Calculator:
 
     @staticmethod
     def charging_duration(initial_charge: int, final_charge: int, capacity: int, power: int) -> timedelta:
-        """Calculates time required to charge"""
-        validate(initial_charge=initial_charge, final_charge=final_charge, capacity=capacity)
-
         hours = (final_charge - initial_charge) / 100 * capacity / power
         return timedelta(hours=hours)
 
     @staticmethod
     def period_charge(p: Period, initial_charge: int, final_charge: int, total_dur: timedelta) -> float:
-        validate(initial_charge=initial_charge, final_charge=final_charge)
-
         charge_proportion = minus_time(p.end, p.start) / total_dur
         return (final_charge - initial_charge) * charge_proportion
 
@@ -48,12 +44,13 @@ class Calculator:
         return max(cost, 0)
 
     def solar_generated(self, period: Period, postcode: int) -> float:
-        """Calculates solar generated (kWh) during a Period with a resolution of seconds"""
         sunrise = self.api.sunrise(postcode, period.day)
         sunset = self.api.sunset(postcode, period.day)
-        dl_hours: float = minus_time(sunset, sunrise).total_seconds() / 60 / 60
-        si: float = self.api.solar_insolation(postcode, period.day)
-        generated_per_hour = si / dl_hours * PANEL_SIZE * PANEL_EFFICIENCY
+        dl_hours = minus_time(sunset, sunrise).total_seconds() / 60 / 60
+
+        si = self.__avg_solar_insolation(period, postcode)
+        cc = self.__avg_cloud_cover(period, postcode)
+        generated_per_hour = (si / dl_hours) * (1 - cc) * PANEL_SIZE * PANEL_EFFICIENCY
 
         earliest_start = max(sunrise, period.start)
         latest_end = min(sunset, period.end)
@@ -61,3 +58,18 @@ class Calculator:
 
         total: float = generated_per_hour * hours_generating
         return total
+
+    @staticmethod
+    def __get_closest_avg_dates(day: date) -> [date]:
+        start_year = day.year if day < date.today() else date.today().year
+        return [date(start_year - i, day.month, day.day) for i in range(AVERAGE_POINTS)]
+
+    def __avg_solar_insolation(self, period: Period, postcode: int) -> float:
+        dates = Calculator.__get_closest_avg_dates(period.day)
+        values = [self.api.solar_insolation(postcode, d) for d in dates]
+        return sum(values) / len(values)
+
+    def __avg_cloud_cover(self, period: Period, postcode: int) -> float:
+        dates = Calculator.__get_closest_avg_dates(period.day)
+        values = [self.api.cloud_cover(postcode, d, period.start.hour) for d in dates]
+        return sum(values) / len(values)
