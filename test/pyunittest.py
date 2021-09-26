@@ -15,6 +15,30 @@ class TestCalculator(unittest.TestCase):
 
         self.assertEqual(cm.exception, expected_exception)
 
+    def test_periods_split_by_day(self):
+        (y, m) = (2000, 1)
+        self.assertEqual(split(datetime(y, m, 1, 20), datetime(y, m, 2, 4)), [
+            Period(date(y, m, 1), time(20), DAY_END),  # Day 1
+            Period(date(y, m, 2), DAY_START, time(4))  # Day 2
+        ])
+
+    def test_periods_split_by_peak(self):
+        (y, m) = (2000, 1)
+        self.assertEqual(split(datetime(y, m, 1, 4), datetime(y, m, 1, 23)), [
+            Period(date(y, m, 1), time(4), BEFORE_PEAK),  # Prior to peak
+            Period(date(y, m, 1), PEAK_START, PEAK_END),  # During peak
+            Period(date(y, m, 1), AFTER_PEAK, time(23))
+        ])
+
+    def test_periods_split_by_day_and_peak(self):
+        (y, m) = (2000, 1)
+        self.assertEqual(split(datetime(y, m, 1, 15), datetime(y, m, 2, 14)), [
+            Period(date(y, m, 1), time(15), PEAK_END),  # Day 1, during peak
+            Period(date(y, m, 1), AFTER_PEAK, DAY_END),  # Day 1, after peak
+            Period(date(y, m, 2), DAY_START, BEFORE_PEAK),  # Day 2, before peak
+            Period(date(y, m, 2), PEAK_START, time(14))  # Day 2, during peak
+        ])
+
     def test_battery_capacity1(self):
         self.assertValidation(Capacity.NotPositiveInteger, lambda: Capacity.validate(-1))
         # This is equivalent to
