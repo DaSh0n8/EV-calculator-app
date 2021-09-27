@@ -79,6 +79,7 @@ class TestCalculator(unittest.TestCase):
         # Non-numerical input
         self.assertValidation(Capacity.NotPositiveInteger, Capacity.validate, "abc")
 
+
         # INITIAL AND FINAL SOC
         # Off-point value for initial SoC with on-point value for final SoC
         self.assertValidation(InitialCharge.NotPercentage, lambda: InitialCharge.validate(-1, 100))
@@ -177,35 +178,35 @@ class TestCalculator(unittest.TestCase):
     def charger_config_test(self, configuration):
         if configuration == 1:
             power = 2
-            time = self.calculator.time_calculation(20, 30, 75, power)
+            time = self.calculator.charging_duration(20, 30, 75, power)
             return time
         elif configuration == 2:
             power = 3.6
-            time = self.calculator.time_calculation(20, 30, 75, power)
+            time = self.calculator.charging_duration(20, 30, 75, power)
             return time
         elif configuration == 3:
             power = 7.2
-            time = self.calculator.time_calculation(20, 30, 75, power)
+            time = self.calculator.charging_duration(20, 30, 75, power)
             return time
         elif configuration == 4:
             power = 11
-            time = self.calculator.time_calculation(20, 30, 75, power)
+            time = self.calculator.charging_duration(20, 30, 75, power)
             return time
         elif configuration == 5:
             power = 22
-            time = self.calculator.time_calculation(20, 30, 75, power)
+            time = self.calculator.charging_duration(20, 30, 75, power)
             return time
         elif configuration == 6:
             power = 36
-            time = self.calculator.time_calculation(20, 30, 75, power)
+            time = self.calculator.charging_duration(20, 30, 75, power)
             return time
         elif configuration == 7:
             power = 90
-            time = self.calculator.time_calculation(20, 30, 75, power)
+            time = self.calculator.charging_duration(20, 30, 75, power)
             return time
         elif configuration == 8:
             power = 350
-            time = self.calculator.time_calculation(20, 30, 75, power)
+            time = self.calculator.charging_duration(20, 30, 75, power)
             return time
         else:
             time = "Configuration must be in rage 1-8"

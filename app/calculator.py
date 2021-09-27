@@ -27,7 +27,7 @@ class Calculator:
         return total_cost
 
     @staticmethod
-    def charging_duration(initial_charge: int, final_charge: int, capacity: int, power: int) -> timedelta:
+    def charging_duration(initial_charge: int, final_charge: int, capacity: int, power: float) -> timedelta:
         hours = (final_charge - initial_charge) / 100 * capacity / power
         return timedelta(hours=hours)
 
