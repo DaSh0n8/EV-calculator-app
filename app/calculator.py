@@ -12,7 +12,7 @@ class Calculator:
         self.api = api
 
     def cost(self, initial_charge: int, final_charge: int, capacity: int,
-             charger_config: int, start_date: date, start_time: time, postcode: int) -> float:
+             charger_config: str, start_date: date, start_time: time, postcode: int) -> float:
         (power, price) = CHARGER_CONFIGS[charger_config]
         total_dur: timedelta = Calculator.charging_duration(initial_charge, final_charge, capacity, power)
 
@@ -73,3 +73,5 @@ class Calculator:
         dates = Calculator.__get_closest_avg_dates(period.day)
         values = [self.api.cloud_cover(postcode, d, period.start.hour) for d in dates]
         return sum(values) / len(values)
+
+

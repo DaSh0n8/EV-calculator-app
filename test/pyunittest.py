@@ -58,14 +58,6 @@ class TestCalculator(unittest.TestCase):
         r = c.solar_generated(Period(date.today(), sunrise, sunset), 1000)
         self.assertAlmostEqual(r, si * (1 - cc) * PANEL_SIZE * PANEL_EFFICIENCY, 5)
 
-    def test_battery_capacity1(self):
-        self.assertValidation(Capacity.NotPositiveInteger, lambda: Capacity.validate(-1))
-        # This is equivalent to
-        self.assertValidation(Capacity.NotPositiveInteger, Capacity.validate, -1)
-
-    def test_battery_capacity2(self):
-        self.assertTrue(Capacity.validate(5))
-
     def test_cost(self):
         self.assertEqual(self.calculator.cost_calculation(20, 30, 75, True, True), 8.25)
 
@@ -79,7 +71,7 @@ class TestCalculator(unittest.TestCase):
         # Non-numerical input
         self.assertValidation(Capacity.NotPositiveInteger, Capacity.validate, "abc")
 
-
+    def test_soc(self):
         # INITIAL AND FINAL SOC
         # Off-point value for initial SoC with on-point value for final SoC
         self.assertValidation(InitialCharge.NotPercentage, lambda: InitialCharge.validate(-1, 100))
@@ -100,6 +92,7 @@ class TestCalculator(unittest.TestCase):
         # Invalid initial SoC with off-point final SoC
         self.assertValidation(InitialCharge.NotPercentage, lambda: InitialCharge.validate(120, 100))
 
+    def test_time_and_date(self):
         # TIME AND DATE
         # Description: Pairwise testing for Time and Date inputs
         # Off-peak hour with surcharge
@@ -129,6 +122,7 @@ class TestCalculator(unittest.TestCase):
         # Starting one minute before day with surcharge
         # Starting one minute before day without surcharge
 
+    def test_charger_config(self):
         # CHARGER CONFIGURATION
         # Description: Using boundary testing for charger configuration
         # Using an off-point value at the beginning of the range
@@ -145,6 +139,19 @@ class TestCalculator(unittest.TestCase):
         self.assertValidation(ChargerConfig.Invalid, lambda: ChargerConfig.validate("12"))
         # Using an invalid input
         self.assertValidation(ChargerConfig.Invalid, lambda: ChargerConfig.validate("abc"))
+
+    def test_postcode(self):
+        si = 5.6
+        self.assertAlmostEqual(self.postcode_test(1000), si * PANEL_SIZE * PANEL_EFFICIENCY, 5)
+        self.assertValidation(PostCode.NotPositiveInteger, lambda: PostCode.validate(0))
+        self.assertValidation(PostCode.InvalidDigits, lambda: PostCode.validate(10000))
+
+    def postcode_test(self, postcode):
+        if PostCode.validate(postcode):
+            si, sunrise, sunset = 5.6, time(8), time(8, 59, 59)
+            c = get_calc(si=si, sunrise=sunrise, sunset=sunset)
+            r = c.solar_generated(Period(date.today(), sunrise, sunset), postcode)
+            return r
 
     def battery_test(self, capacity):
         if Capacity.validate(capacity):
