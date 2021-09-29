@@ -61,7 +61,7 @@ class TestCalculator(unittest.TestCase):
     def test_cost(self):
         self.assertEqual(self.calculator.cost_calculation(20, 30, 75, True, True), 8.25)
 
-    def test_functions(self):
+    def test_battery(self):
         # Valid input
         self.assertEqual(self.battery_test(75), 3.75)
         # Using 0 as input
