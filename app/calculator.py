@@ -26,6 +26,20 @@ class Calculator:
 
         return total_cost
 
+    def cost_calculation(self, initial_state, final_state, capacity, is_peak, is_holiday):
+        if is_peak:
+            base_price = 100
+        else:
+            base_price = 50
+
+        if is_holiday:
+            surcharge_factor = 1.1
+        else:
+            surcharge_factor = 1
+
+        cost = (final_state - initial_state) / 100 * capacity * base_price / 100 * surcharge_factor
+        return cost
+
     @staticmethod
     def charging_duration(initial_charge: int, final_charge: int, capacity: int, power: float) -> timedelta:
         hours = (final_charge - initial_charge) / 100 * capacity / power
@@ -38,7 +52,7 @@ class Calculator:
 
     def period_cost(self, period: Period, charge: float, postcode: int, capacity: int, price: float) -> float:
         energy_used = charge / 100 * capacity
-        energy_charged = energy_used - self.solar_generated(period, postcode)
+        energy_charged = energy_used - self.solar_generated(Period(period.day, period.start, period.end), postcode)
 
         cost = energy_charged * price * period.base_price_factor / 100 * period.surcharge_factor
         return max(cost, 0)
