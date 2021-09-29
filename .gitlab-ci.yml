@@ -1,23 +1,3 @@
-#stages:
-#    - build
-#    - test
-#
-#build:
-#    stage: build
-#    image: python:3.8-alpine
-#    script:
-#        - echo "Building"
-#        - pip3 install --upgrade pip
-#        - python3 Calendar.py
-
-#test:
-#    stage: test
-#    image: python:3.8-alpine
-#    script:
-#        - echo "Testing"
-#        - pip3 install --upgrade pip
-#        - python3 CalendarTest.py\
-
 image: python:3.7
 
 test:
