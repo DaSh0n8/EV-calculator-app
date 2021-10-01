@@ -22,13 +22,20 @@ class SolarTests(TestsBase):
         r = c.solar_generated(Period(date.today(), sunrise, sunset), 1000)
         self.assertAlmostEqual(r, si * (1 - cc) * PANEL_SIZE * PANEL_EFFICIENCY, 2)
 
+    def test_partial_solar_generated_with_cloud_cover(self):
+        si, cc, sunrise, sunset = 5.6, 0.5, time(8), time(10)
+        c = mock_calc(si=si, cc=cc, sunrise=sunrise, sunset=sunset)
+        r = c.solar_generated(Period(date.today(), time(8), time(8, 59, 59)), 1000)
+        self.assertAlmostEqual(r, si * (1 - cc) * PANEL_SIZE * PANEL_EFFICIENCY / 2, 1)
+
     def test_past_years_from_past_date(self):
         years = Calculator.get_past_years(date(2000, 1, 1), 3)
         self.assertEqual(years, [date(2000, 1, 1), date(1999, 1, 1), date(1998, 1, 1)])
 
     def test_past_years_from_current_date(self):
         years = Calculator.get_past_years(date.today(), 3)
-        self.assertEqual(years, [date(2021, 10, 2), date(2020, 10, 2), date(2019, 10, 2)])
+        self.assertEqual(years, [date.today(), date(date.today().year - 1, date.today().month, date.today().day),
+                                 date(date.today().year - 2, date.today().month, date.today().day)])
 
     def test_past_years_from_future_date(self):
         years = Calculator.get_past_years(date(2021, 11, 12), 3)
