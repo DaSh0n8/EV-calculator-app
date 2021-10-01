@@ -27,10 +27,12 @@ class SolarTests(TestsBase):
         self.assertEqual(years, [date(2000, 1, 1), date(1999, 1, 1), date(1998, 1, 1)])
 
     def test_past_years_from_current_date(self):
-        pass
+        years = Calculator.get_past_years(date.today(), 3)
+        self.assertEqual(years, [date(2021, 10, 2), date(2020, 10, 2), date(2019, 10, 2)])
 
     def test_past_years_from_future_date(self):
-        pass
+        years = Calculator.get_past_years(date(2021, 11, 12), 3)
+        self.assertEqual(years, [date(2021, 11, 12), date(2020, 11, 12), date(2019, 11, 12)])
 
     def test_averaged_solar_insolation(self):
         pass
