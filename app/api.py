@@ -42,7 +42,7 @@ class WeatherApi(WeatherApiInterface):
     def __get_data(self, postcode: int, day: date):
         # Get cached data, or fetch it if it isn't
         key = (postcode, day)
-        if self.__data[key] is None:
+        if key not in self.__data:
             self.__data[key] = WeatherApi.fetch_data(postcode, day)
         return self.__data[key]
 

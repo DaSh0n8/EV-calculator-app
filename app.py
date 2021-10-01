@@ -18,41 +18,25 @@ def operation_result():
 
     # validation of the form
     if request.method == "POST" and form.validate():
-        # if valid, create calculator to calculate the time and cost
-        calculator = Calculator()
+        capacity: int = form.capacity.data
+        initial_charge: int = form.initial_charge.data
+        final_charge: int = form.final_charge.data
+        start_date: date = form.start_date.data
+        start_time: time = form.start_time.data
+        charger_config: str = form.charger_config.data
+        postcode = form.post_code.data
 
-        # extract information from the form
-        capacity = form.capacity.data
-        initial_charge = form.initial_charge.data
-        final_charge = form.final_charge.data
-        start_date = form.start_date.data
-        start_time = form.start_time.data
-        charger_config = form.charger_config.data
+        calc = Calculator(WeatherApi())
 
-        # you may change the logic as your like
-        duration = calculator.get_duration(start_time)
+        (power, price) = CHARGER_CONFIGS[charger_config]
+        duration: timedelta = Calculator.charging_duration(initial_charge, final_charge, capacity, power)
 
-        is_peak = calculator.is_peak()
+        cost = calc.total_cost(initial_charge, final_charge, capacity, charger_config, start_date, start_time, postcode)
 
-        if is_peak:
-            peak_period = calculator.peak_period(start_date)
-
-        is_holiday = calculator.is_holiday(start_date)
-
-        # cost = calculator.cost_calculation(initial_charge, final_charge, battery_capacity, is_peak, is_holiday)
-
-        # time = calculator.time_calculation(initial_charge, final_charge, battery_capacity, power)
-
-        # you may change the return statement also
-
-        # values of variables can be sent to the template for rendering the webpage that users will see
-        # return render_template('calculator.html', cost = cost, time = time, calculation_success = True, form = form)
-        return render_template(CALCULATOR_PAGE, calculation_success=True, form=form)
+        return render_template(CALCULATOR_PAGE, calculation_success=True, form=form,
+                               cost=f"${cost}", time=str(duration))
 
     else:
-        # battery_capacity = request.form['BatteryPackCapacity']
-        # flash(battery_capacity)
-        # flash("something went wrong")
         flash_errors(form)
         return render_template(CALCULATOR_PAGE, calculation_success=False, form=form)
 

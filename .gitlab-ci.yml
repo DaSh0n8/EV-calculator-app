@@ -7,7 +7,7 @@
     build:
         stage: build
         tags:
-            - fit2107-runner-9
+            - fit2107-runner-10
         image: python:3.8-alpine
         script:
             python3 app/__init__.py
@@ -19,9 +19,4 @@
         stage: test
         image: python:3.8-alpine
         script:
-            python3 app/__init__.py
-            python3 app/api.py
-            python3 app/calculator.py
-            python3 app/period.py
-            python3 app/validation.py
-            python3 test/pyunittest.py
+            python3 test/test_validation.py
