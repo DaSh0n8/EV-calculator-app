@@ -1,15 +1,4 @@
-#image: python:3.7
-#
-#test:
-#    script:
-#        python3 app/__init__.py
-#        python3 app/api.py
-#        python3 app/calculator.py
-#        python3 app/period.py
-#        python3 app/validation.py
-#        python3 test/pyunittest.py
-
-    stages:
+   stages:
         - build
         - test
 
