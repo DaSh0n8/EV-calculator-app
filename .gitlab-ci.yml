@@ -16,9 +16,10 @@
     build:
         stage: build
         tags:
-            - fit2107-runner
+            - fit2107-runner-9
         image: python:3.8-alpine
         script:
+            pip install -r requirements.txt
             python3 app/__init__.py
             python3 app/api.py
             python3 app/calculator.py
