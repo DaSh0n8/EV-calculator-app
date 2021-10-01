@@ -12,14 +12,20 @@ PEAK_END = time(18)
 BEFORE_PEAK = (to_datetime(date.today(), PEAK_START) - timedelta(seconds=1)).time()
 AFTER_PEAK = (to_datetime(date.today(), PEAK_END) + timedelta(seconds=1)).time()
 
+PERIOD_START_AFTER_END = Exception("Period start time must be after the end time")
+PERIOD_NOT_THE_SAME_HOUR = Exception("Period start and end time must be within the same hour")
+
 
 class Period:
     def __init__(self, day: date, start: time, end: time):
         self.day = day
         self.start = start
         self.end = end
-        assert start < end
-        assert start.hour == end.hour
+
+        if start > end:
+            raise PERIOD_START_AFTER_END
+        if start.hour != end.hour:
+            raise PERIOD_NOT_THE_SAME_HOUR
 
     def __eq__(self, o):
         return (self.day, self.start, self.end) == (o.day, o.start, o.end)
@@ -59,6 +65,11 @@ class Period:
 def minus_time(lhs: time, rhs: time) -> timedelta:
     d = datetime.now()
     return to_datetime(d, lhs) - to_datetime(d, rhs)
+
+
+def add_time(t: time, delta: timedelta) -> time:
+    """Warning: this function CAN overflow if time + delta > 24 hours"""
+    return (to_datetime(date.today(), t) + delta).time()
 
 
 def split(start: datetime, end: datetime) -> [Period]:
