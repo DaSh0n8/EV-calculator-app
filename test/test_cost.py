@@ -32,9 +32,9 @@ class PeriodCostTests(TestsBase):
         p = Period(DAY, time(9), time(9, 5))
         self.assertEqual(Calculator.period_cost(p, 0, 20, 50), 0)
 
-    def test_zero_price_period_cost(self):
+    def test_zero_solar_generated_period_cost(self):
         p = Period(DAY, time(9), time(9, 5))
-        self.assertEqual(Calculator.period_cost(p, 20, 0, 50), 0)
+        self.assertEqual(Calculator.period_cost(p, 20, 10, 0), 200)
 
 
 class TotalCostTests(TestsBase):
