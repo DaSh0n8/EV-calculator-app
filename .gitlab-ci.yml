@@ -1,22 +1,11 @@
+stages:
+  - test
 
-
-    stages:
-        - build
-        - test
-
-    build:
-        stage: build
-        tags:
-            - fit2107-runner-10
-        image: python:3.8-alpine
-        script:
-            python3 app/__init__.py
-            python3 app/api.py
-            python3 app/calculator.py
-            python3 app/period.py
-            python3 app/validation.py
-    test:
-        stage: test
-        image: python:3.8-alpine
-        script:
-            python3 test/test_validation.py
+test:
+  stage: test
+  image: python:3.8-alpine
+  script:
+    - echo "Testing..."
+    - pip3 install --upgrade pip
+    - pip3 install -r requirements.txt
+    - python3 -m unittest
