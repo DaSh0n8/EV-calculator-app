@@ -11,20 +11,30 @@ class PeriodCostTests(TestsBase):
         self.assertEqual(cost, 100)
 
     def test_on_peak_with_surcharge(self):
-        pass
+        # Monday (with surcharge) during peak hours
+        p = Period(date(2021, 9, 6), time(13), time(13, 59, 59))
+        cost = Calculator.period_cost(p, charge_kwh=20, price=10, solar_generated=10)
+        self.assertAlmostEqual(cost, 110)
 
     def test_off_peak_without_surcharge(self):
-        pass
+        # Saturday (non-surcharge) during off-peak hours
+        p = Period(date(2021, 9, 4), time(21), time(21, 59, 59))
+        cost = Calculator.period_cost(p, charge_kwh=20, price=10, solar_generated=10)
+        self.assertEqual(cost, 50)
 
     def test_off_peak_with_surcharge(self):
-        pass
+        # Monday (with surcharge) during off-peak hours
+        p = Period(date(2021, 9, 6), time(21), time(21, 59, 59))
+        cost = Calculator.period_cost(p, charge_kwh=20, price=10, solar_generated=10)
+        self.assertAlmostEqual(cost, 55)
 
     def test_zero_charge_period_cost(self):
         p = Period(DAY, time(9), time(9, 5))
         self.assertEqual(Calculator.period_cost(p, 0, 20, 50), 0)
 
     def test_zero_price_period_cost(self):
-        pass
+        p = Period(DAY, time(9), time(9, 5))
+        self.assertEqual(Calculator.period_cost(p, 20, 0, 50), 0)
 
 
 class TotalCostTests(TestsBase):
