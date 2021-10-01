@@ -1,29 +1,12 @@
-#image: python:3.7
-#
-#test:
-#    script:
-#        python3 app/__init__.py
-#        python3 app/api.py
-#        python3 app/calculator.py
-#        python3 app/period.py
-#        python3 app/validation.py
-#        python3 test/pyunittest.py
+image: python:3.7
 
-    stages:
-        - build
-        - test
+test:
+    script:
+        - echo "Testing
+        - python3 app/__init__.py
+        - python3 app/api.py
+        - python3 app/calculator.py
+        - python3 app/period.py
+        - python3 app/validation.py
+        - python3 test/pyunittest.py
 
-    build:
-        stage: build
-        image: python:3.7
-        script:
-            python3 app/__init__.py
-            python3 app/api.py
-            python3 app/calculator.py
-            python3 app/period.py
-            python3 app/validation.py
-    test:
-        stage: test
-        image: python:3.7
-        script:
-            python3 test/pyunittest.py
