@@ -34,10 +34,10 @@ always be the same. Thus, there are only different results for either on-peak/of
 
 Test_solar.py
 For solar generation, we again use pairwise testing for partial and cloud cover. The invalid inputs for si and cc are
-excluded because those data will be retrieved from the api, so we do not have to validate those values
+excluded because those data will be retrieved from the api, so we do not have to validate those values. We have 3 sets
+of these tests for the past, current and future dates to fulfil REQ2 and REQ3
 
-To test the get_past_years method. We have a test for past, current and future dates to fulfil REQ3. Again, the date
-inputs for year, month and day will be checked by the date validation method.
+Subsequently, we also have tests for get_past_years for a past, current and future date
 
 
 Test_validation.py
