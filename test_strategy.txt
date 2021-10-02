@@ -1,0 +1,47 @@
+Test Strategy
+For this assignment, we’ve implemented whitebox testing for all of our test cases in iteration 1, with the addition of
+solar generation in the equations used. On top of that, there are also new test cases that were implemented due to the
+new functions added for assignment 2 (e.g. postcode, solar generation, time etc). In this document, we will be going
+over the reasoning behind the changes we made to the base functions and new functions we have added.
+
+
+Test_charge.py
+The test_charging_duration and test_charge_amount methods only include valid inputs because these two methods are
+called within total_cost method. The invalid inputs for each of the parameters can be found in test_validation.py
+
+Test_cost.py
+Here, we will be testing the two methods period_cost and total_cost. Through the split method called in total_cost,
+the period_cost method takes in 2 periods within the same hour and calculate the cost just for that specific hour. The
+testing technique we have used for period_cost is pairwise testing for the date and time, as this helps us achieve 100%
+coverage for the first parameter of the method. Throughout all these tests, the other 3 parameters (charge, price and
+solar generated) are kept constant.  The purpose of this is to show the difference of each of the test outputs more
+clearly as there are no other inputs affecting the result.
+
+We have also created tests for two of the other parameters,
+charge and solar generated. In these two tests, we use 0 for the input value for the respective tests. We did not create
+a test for price as it is impossible for the value to be 0, as its value is taken directly from the charger
+configuration. On top of that, we have created a validation for the charger configuration input, so there will never
+be an invalid price input. We have also used pairwise testing for the total_cost method, for the same reason as
+period_cost.
+
+Test_period.py
+In this test file, we were mostly testing the split function and its results. For the first three tests where a time
+input is required, we just have the valid inputs as the time class does not accept invalid time inputs. Following the
+period tests, we use equivalence testing for the surcharge factor for weekdays/weekends and base price factor for peak
+and off-peak hours. This is because as long as either time or day are within the respective subset, the output will
+always be the same. Thus, there are only different results for either on-peak/off-peak hours or weekdays/holidays.
+
+
+Test_solar.py
+For solar generation, we again use pairwise testing for partial and cloud cover. The invalid inputs for si and cc are
+excluded because those data will be retrieved from the api, so we do not have to validate those values
+
+To test the get_past_years method. We have a test for past, current and future dates to fulfil REQ3. Again, the date
+inputs for year, month and day will be checked by the date validation method.
+
+
+Test_validation.py
+This file tests all the inputs for the entry point method total_cost, except for time and date. We did not have to
+create validations for time and date because datetime.py itself does not take invalid inputs. For test_battery,
+test_charger_config and test_postcode, we have a test for all possible types of input.  Test_soc will be using pairwise
+testing, the same as the test cases we’ve come up with for assignment 1.

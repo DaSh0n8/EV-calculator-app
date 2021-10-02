@@ -1,0 +1,23 @@
+Work breakdown agreement
+
+Brandon
+Time spent on the project: ~20 hours
+Contributions:
+    -Creating test cases
+    -Writing test strategy
+    -Developing CI/CD file
+    -Testing invalid inputs
+
+Hayden
+Time spent on the project: ~20 hours
+Contributions:
+    -Creating methods for calculations
+    -Creating validation methods
+    -Working on frontend calculator
+    -Developing CI/CD file
+
+Isuru
+Time spent on the project: ~20 hours
+Contributions:
+    -Doing coverage for code
+    -Working on frontend calculator

@@ -60,7 +60,9 @@ class Calculator:
         sunset = self.api.sunset(postcode, period.day)
         dl_hours = minus_time(sunset, sunrise).total_seconds() / 60 / 60
 
-        si = self.api.solar_insolation(postcode, period.day)
+        si = self.avg_solar_insolation(period, postcode)
+        cc = self.avg_cloud_cover(period, postcode)
+        generated_per_hour = (si / dl_hours) * (1 - cc) * PANEL_SIZE * PANEL_EFFICIENCY
 
         earliest_start = max(sunrise, period.start)
         latest_end = min(sunset, period.end)
@@ -100,3 +102,13 @@ class Calculator:
     def get_past_years(day: date, past_years: int = 3) -> [date]:
         start_year = day.year if day < date.today() else date.today().year
         return [date(start_year - i, day.month, day.day) for i in range(past_years)]
+
+    def avg_solar_insolation(self, period: Period, postcode: int) -> float:
+        dates = Calculator.get_past_years(period.day)
+        values = [self.api.solar_insolation(postcode, d) for d in dates]
+        return sum(values) / len(values)
+
+    def avg_cloud_cover(self, period: Period, postcode: int) -> float:
+        dates = Calculator.get_past_years(period.day)
+        values = [self.api.cloud_cover(postcode, d, period.start.hour) for d in dates]
+        return sum(values) / len(values)
