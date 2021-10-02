@@ -43,10 +43,17 @@ class ValidationTests(TestsBase):
         self.assertTrue(ChargerConfig.validate("4"))
         # Using an out-point value
         self.assertValidation(ChargerConfig.Invalid, lambda: ChargerConfig.validate("12"))
-        # Using an invalid input
+        # Using an invalid string
         self.assertValidation(ChargerConfig.Invalid, lambda: ChargerConfig.validate("abc"))
+        # Using an integer
+        self.assertValidation(ChargerConfig.Invalid, lambda: ChargerConfig.validate(2))
 
     def test_postcode(self):
+        # Using a valid postcode
         self.assertTrue(PostCode.validate(3000))
+        # Using not positive integer
         self.assertValidation(PostCode.NotPositiveInteger, lambda: PostCode.validate(0))
+        # Using an invalid postcode
         self.assertValidation(PostCode.InvalidDigits, lambda: PostCode.validate(10000))
+        # Using a string input
+        self.assertValidation(PostCode.NotPositiveInteger, lambda: PostCode.validate("abc"))
