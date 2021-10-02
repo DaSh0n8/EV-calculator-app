@@ -38,7 +38,7 @@ class SolarTests(TestsBase):
                                  date(date.today().year - 2, date.today().month, date.today().day)])
 
     def test_past_years_from_future_date(self):
-        years = Calculator.get_past_years(date(2021, 11, 12), 3)
+        years = Calculator.get_past_years(date(2025, 11, 12), 3)
         self.assertEqual(years, [date(2021, 11, 12), date(2020, 11, 12), date(2019, 11, 12)])
 
     def test_averaged_solar_insolation(self):
