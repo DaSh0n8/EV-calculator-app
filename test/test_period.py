@@ -18,11 +18,11 @@ class PeriodTests(TestsBase):
             Period(day, time(3), time(3, 45)),
         ])
 
-    def test_peak_with_during_non_surcharge_day(self):
+    def test_peak_during_non_surcharge_day(self):
         p = Period(day, PEAK_START, add_time(PEAK_START, timedelta(minutes=50)))
         self.assertEqual(p.is_peak, True)
 
-    def test_off_peak_when_during_non_surcharge_day(self):
+    def test_off_peak_during_non_surcharge_day(self):
         p = Period(day, time(20), add_time(time(20), timedelta(minutes=50)))
         self.assertEqual(p.is_peak, False)
 

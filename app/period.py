@@ -58,7 +58,7 @@ class Period:
         return self.day.weekday() < 5
 
     def __is_holiday(self) -> bool:
-        # TODO: handle public & school holidays
+        # TODO: handle public holidays
         return False
 
 
