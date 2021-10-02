@@ -12,7 +12,7 @@ PEAK_END = time(18)
 BEFORE_PEAK = (to_datetime(date.today(), PEAK_START) - timedelta(seconds=1)).time()
 AFTER_PEAK = (to_datetime(date.today(), PEAK_END) + timedelta(seconds=1)).time()
 
-PERIOD_START_AFTER_END = Exception("Period start time must be after the end time")
+PERIOD_START_AFTER_END = Exception("Period start time must be before the end time")
 PERIOD_NOT_THE_SAME_HOUR = Exception("Period start and end time must be within the same hour")
 
 

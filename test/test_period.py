@@ -1,6 +1,7 @@
 from .testsbase import *
 
 day = date(2000, 1, 1)
+surcharge_day = date(2021, 9, 6)
 
 
 class PeriodTests(TestsBase):
@@ -20,5 +21,17 @@ class PeriodTests(TestsBase):
     def test_peak_when_during(self):
         p = Period(day, PEAK_START, add_time(PEAK_START, timedelta(minutes=50)))
         self.assertEqual(p.is_peak, True)
+
+    def test_off_peak_when_during(self):
+        p = Period(day, PEAK_END, add_time(PEAK_END, timedelta(minutes=50)))
+        self.assertEqual(p.is_peak, False)
+
+    def test_is_surcharge_day(self):
+        p = Period(surcharge_day, PEAK_START, add_time(PEAK_START, timedelta(minutes=50)))
+        self.assertEqual(p.is_surcharge_day, True)
+
+    def test_is_not_surcharge_day(self):
+        p = Period(day, PEAK_START, add_time(PEAK_START, timedelta(minutes=50)))
+        self.assertEqual(p.is_surcharge_day, False)
 
     # TODO: tests for is_peak, is_surcharge_day, base_price_factor, surcharge_factor etc.
