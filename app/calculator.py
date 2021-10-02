@@ -53,32 +53,50 @@ class Calculator:
         return (final_charge - initial_charge) * charge_proportion
 
     def solar_generated(self, period: Period, postcode: int) -> float:
+        return self._req3_solar_generated(period, postcode)
+
+    def _req2_solar_generated(self, period: Period, postcode: int) -> float:
         sunrise = self.api.sunrise(postcode, period.day)
         sunset = self.api.sunset(postcode, period.day)
         dl_hours = minus_time(sunset, sunrise).total_seconds() / 60 / 60
 
-        si = self.__avg_solar_insolation(period, postcode)
-        cc = self.__avg_cloud_cover(period, postcode)
-        generated_per_hour = (si / dl_hours) * (1 - cc) * PANEL_SIZE * PANEL_EFFICIENCY
+        si = self.api.solar_insolation(postcode, period.day)
 
         earliest_start = max(sunrise, period.start)
         latest_end = min(sunset, period.end)
         hours_generating = minus_time(latest_end, earliest_start).total_seconds() / 60 / 60
 
+        generated_per_hour = (si / dl_hours) * PANEL_SIZE * PANEL_EFFICIENCY
+
         total: float = generated_per_hour * hours_generating
+        return total
+
+    def _req3_solar_generated(self, period: Period, postcode: int) -> float:
+        avg_generated_per_hour = 0
+
+        past_year_count_to_take_the_avg_over = 3
+        dates = Calculator.get_past_years(period.day, past_year_count_to_take_the_avg_over)
+        for d in dates:
+            sunrise = self.api.sunrise(postcode, period.day)
+            sunset = self.api.sunset(postcode, period.day)
+            dl_hours = minus_time(sunset, sunrise).total_seconds() / 60 / 60
+
+            si = self.api.solar_insolation(postcode, period.day)
+            cc = self.api.cloud_cover(postcode, period.day, period.start.hour)
+
+            avg_generated_per_hour += (si / dl_hours) * (1 - cc) * PANEL_SIZE * PANEL_EFFICIENCY
+
+        avg_generated_per_hour /= past_year_count_to_take_the_avg_over
+
+        earliest_start = max(sunrise, period.start)
+        latest_end = min(sunset, period.end)
+        hours_generating = minus_time(latest_end, earliest_start).total_seconds() / 60 / 60
+            
+        total: float = avg_generated_per_hour * hours_generating
+        
         return total
 
     @staticmethod
     def get_past_years(day: date, past_years: int = 3) -> [date]:
         start_year = day.year if day < date.today() else date.today().year
         return [date(start_year - i, day.month, day.day) for i in range(past_years)]
-
-    def __avg_solar_insolation(self, period: Period, postcode: int) -> float:
-        dates = Calculator.get_past_years(period.day)
-        values = [self.api.solar_insolation(postcode, d) for d in dates]
-        return sum(values) / len(values)
-
-    def __avg_cloud_cover(self, period: Period, postcode: int) -> float:
-        dates = Calculator.get_past_years(period.day)
-        values = [self.api.cloud_cover(postcode, d, period.start.hour) for d in dates]
-        return sum(values) / len(values)
