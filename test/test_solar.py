@@ -42,7 +42,13 @@ class SolarTests(TestsBase):
         self.assertEqual(years, [date(2021, 11, 12), date(2020, 11, 12), date(2019, 11, 12)])
 
     def test_averaged_solar_insolation(self):
-        pass
+        si, sunrise, sunset = 5.6, time(8), time(8, 59, 59)
+        c = mock_calc(si=si, sunrise=sunrise, sunset=sunset)
+        r = c.avg_solar_insolation(Period(date.today(), sunrise, sunset), 1000)
+        self.assertAlmostEqual(r, 6, 0)
 
     def test_averaged_cloud_cover(self):
-        pass
+        si, cc, sunrise, sunset = 5.6, 0.5, time(8), time(8, 59, 59)
+        c = mock_calc(si=si, sunrise=sunrise, sunset=sunset)
+        r = c.avg_cloud_cover(Period(date.today(), sunrise, sunset), 1000)
+        self.assertAlmostEqual(r, 0, 0)
