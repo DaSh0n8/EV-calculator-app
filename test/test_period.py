@@ -18,12 +18,12 @@ class PeriodTests(TestsBase):
             Period(day, time(3), time(3, 45)),
         ])
 
-    def test_peak_when_during(self):
+    def test_peak_with_during(self):
         p = Period(day, PEAK_START, add_time(PEAK_START, timedelta(minutes=50)))
         self.assertEqual(p.is_peak, True)
 
     def test_off_peak_when_during(self):
-        p = Period(day, PEAK_END, add_time(PEAK_END, timedelta(minutes=50)))
+        p = Period(day, time(20), add_time(time(20), timedelta(minutes=50)))
         self.assertEqual(p.is_peak, False)
 
     def test_is_surcharge_day(self):
@@ -34,4 +34,19 @@ class PeriodTests(TestsBase):
         p = Period(day, PEAK_START, add_time(PEAK_START, timedelta(minutes=50)))
         self.assertEqual(p.is_surcharge_day, False)
 
-    # TODO: tests for is_peak, is_surcharge_day, base_price_factor, surcharge_factor etc.
+    def test_base_price_factor_on_peak_hours(self):
+        p = Period(day, PEAK_START, add_time(PEAK_START, timedelta(minutes=50)))
+        self.assertEqual(p.base_price_factor, 1)
+
+    def test_base_price_factor_on_off_peak_hours(self):
+        p = Period(day, time(20), add_time(time(20), timedelta(minutes=50)))
+        self.assertEqual(p.base_price_factor, 0.5)
+
+    def test_surcharge_factor_on_non_surcharge_day(self):
+        p = Period(day, PEAK_START, add_time(PEAK_START, timedelta(minutes=50)))
+        self.assertEqual(p.surcharge_factor, 1)
+
+    def test_surcharge_factor_on_surcharge_day(self):
+        p = Period(surcharge_day, PEAK_START, add_time(PEAK_START, timedelta(minutes=50)))
+        self.assertEqual(p.surcharge_factor, 1.1)
+
