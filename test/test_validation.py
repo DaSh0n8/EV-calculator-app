@@ -29,12 +29,18 @@ class ValidationTests(TestsBase):
         self.assertValidation(InitialCharge.NotPercentage, lambda: InitialCharge.validate(-1, 101))
         # Invalid initial SoC with off-point final SoC
         self.assertValidation(InitialCharge.NotPercentage, lambda: InitialCharge.validate(120, 100))
+        # On-point value for initial SoC with on-point value for final SoC
+        self.assertTrue(InitialCharge.validate(0, 100), FinalCharge.validate(100, 0))
 
     def test_charger_config(self):
         # Using an off-point value at the beginning of the range
         self.assertValidation(ChargerConfig.Invalid, lambda: ChargerConfig.validate("0"))
         # Using an off-point value at the end of the range
         self.assertValidation(ChargerConfig.Invalid, lambda: ChargerConfig.validate("9"))
+        # Using an on-point value
+        self.assertTrue(ChargerConfig.validate("1"))
+        # Using an in-point value
+        self.assertTrue(ChargerConfig.validate("4"))
         # Using an out-point value
         self.assertValidation(ChargerConfig.Invalid, lambda: ChargerConfig.validate("12"))
         # Using an invalid input
